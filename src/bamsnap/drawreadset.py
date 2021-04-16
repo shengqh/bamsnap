@@ -42,9 +42,12 @@ class CoveragePlot():
         except KeyError:
             covmap = {}
             max_cov = 0
+
+        true_max_cov = max_cov
         # max_cov = max(max_cov, 5)
         if self.max_cov > 0:
-            self.opt['log'].info("Scale read depth from %d to %s" % (max_cov, self.max_cov))
+            self.opt['log'].info("True coverage = %d, scale to %s" % (max_cov, self.max_cov))
+            max_cov = self.max_cov
         
         g_spos = self.readset.g_spos
         g_epos = self.readset.g_epos
@@ -88,7 +91,7 @@ class CoveragePlot():
         x1 = 0
         # dr.line([(x1, 0), (x1+3, 0)], fill=getrgb(self.axis_color), width=1)
         # dr.line([(x1, int(h/2)), (x1+3, int(h/2))], fill=getrgb(self.axis_color), width=1)
-        txt = "[0-" + str(max_cov) + "]"
+        txt = "[0-" + str(true_max_cov) + "]"
         fontsize = self.font.getsize(txt)
         x1 = w - fontsize[0] - 5
         dr.text( (x1, 0), txt, font=self.font, fill=getrgb(self.axis_color))
