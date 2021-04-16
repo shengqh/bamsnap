@@ -346,7 +346,7 @@ class BamSnapPlot():
         dr.line([(0, h1), (w, h1)], fill=getrgb('000000'), width=1)
         return im
 
-    def get_bamplot_image(self, bam, pos1, image_w, xscale, refseq):
+    def get_bamplot_image(self, bam, pos1, image_w, xscale, refseq, scale_y=True):
         rset = DrawReadSet(bam, pos1['chrom'], pos1['g_spos'], pos1['g_epos'], xscale, refseq)
         rset.read_gap_w = self.opt['read_gap_width']
         rset.read_gap_h = self.opt['read_gap_height']
@@ -362,6 +362,19 @@ class BamSnapPlot():
             ia_sub, title_height = self.get_title_image(bam.title, image_w, self.opt['title_fontsize'])
             border_top = im.height + int(title_height/2)
             im = self.append_image(im, ia_sub)
+
+        max_h = 0
+        if scale_y:
+            for pidx, plot1 in enumerate(self.bamplot):
+                if plot1 == "read":
+                    if self.opt['read_group'] == "":
+                        h_all = rset.get_estimated_height('all')
+                        max_h = max(max_h, h_all)
+                    elif self.opt['read_group'] == "strand":
+                        h_pos = rset.get_estimated_height('pos_strand')
+                        max_h = max(max_h, h_pos)
+                        h_neg = rset.get_estimated_height('neg_strand')
+                        max_h = max(max_h, h_neg)
 
         for pidx, plot1 in enumerate(self.bamplot):
             if plot1 == "heatmap":
@@ -379,20 +392,20 @@ class BamSnapPlot():
 
             if plot1 == "read":
                 if self.opt['read_group'] == "":
-                    h_all = rset.get_estimated_height('all')
+                    h_all = max_h if max_h > 0 else rset.get_estimated_height('all')
                     ia_sub = rset.get_image(
                         image_w, h_all, 'all', self.opt['read_color'], self.opt['read_bgcolor'], self.opt['read_color_by'])
                     im = self.append_image(im, ia_sub)
 
                 elif self.opt['read_group'] == "strand":
                     # self.opt['read_bgcolor'] = "F0F000"
-                    h_pos = rset.get_estimated_height('pos_strand')
+                    h_pos = max_h if max_h > 0 else rset.get_estimated_height('pos_strand')
                     ia_sub = rset.get_image(image_w, h_pos, 'pos_strand',
                                             self.opt['read_pos_color'], self.opt['read_bgcolor'], self.opt['read_color_by'])
                     im = self.append_image(im, ia_sub)
 
                     # self.opt['read_bgcolor'] = "00F0F0"
-                    h_neg = rset.get_estimated_height('neg_strand')
+                    h_neg = max_h if max_h > 0 else rset.get_estimated_height('neg_strand')
                     ia_sub = rset.get_image(image_w, h_neg, 'neg_strand',
                                             self.opt['read_neg_color'], self.opt['read_bgcolor'], self.opt['read_color_by'])
                     im = self.append_image(im, ia_sub)
