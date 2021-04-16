@@ -346,7 +346,20 @@ class BamSnapPlot():
         dr.line([(0, h1), (w, h1)], fill=getrgb('000000'), width=1)
         return im
 
-    def get_bamplot_image(self, bam, pos1, image_w, xscale, refseq, scale_y=True):
+    def get_bamplot_max_cov(self, bam, pos1, image_w, xscale, refseq):
+        rset = DrawReadSet(bam, pos1['chrom'], pos1['g_spos'], pos1['g_epos'], xscale, refseq)
+        rset.read_gap_w = self.opt['read_gap_width']
+        rset.read_gap_h = self.opt['read_gap_height']
+        rset.read_thickness = self.opt['read_thickness']
+        rset.coverage_vaf = self.opt['coverage_vaf']
+        rset.opt = self.opt
+        rset.xscale = xscale
+        rset.calculate_readmap(is_strand_group=True)
+
+        result = rset.max_cov['all']
+        return(result)
+
+    def get_bamplot_image(self, bam, pos1, image_w, xscale, refseq, max_cov=0):
         rset = DrawReadSet(bam, pos1['chrom'], pos1['g_spos'], pos1['g_epos'], xscale, refseq)
         rset.read_gap_w = self.opt['read_gap_width']
         rset.read_gap_h = self.opt['read_gap_height']
@@ -363,19 +376,6 @@ class BamSnapPlot():
             border_top = im.height + int(title_height/2)
             im = self.append_image(im, ia_sub)
 
-        max_h = 0
-        if scale_y:
-            for pidx, plot1 in enumerate(self.bamplot):
-                if plot1 == "read":
-                    if self.opt['read_group'] == "":
-                        h_all = rset.get_estimated_height('all')
-                        max_h = max(max_h, h_all)
-                    elif self.opt['read_group'] == "strand":
-                        h_pos = rset.get_estimated_height('pos_strand')
-                        max_h = max(max_h, h_pos)
-                        h_neg = rset.get_estimated_height('neg_strand')
-                        max_h = max(max_h, h_neg)
-
         for pidx, plot1 in enumerate(self.bamplot):
             if plot1 == "heatmap":
                 covhmplot = CoverageHeatmap(rset, xscale)
@@ -384,7 +384,7 @@ class BamSnapPlot():
                 im = self.append_image(im, ia_sub)
 
             if plot1 == "coverage":
-                covplot = CoveragePlot(rset, xscale, self.opt['coverage_vaf'])
+                covplot = CoveragePlot(self.opt, rset, xscale, self.opt['coverage_vaf'], max_cov=max_cov)
                 covplot.coverage_color = self.opt['coverage_color']
                 covplot.font = self.get_font(self.opt['coverage_fontsize'])
                 ia_sub = covplot.get_image(image_w, self.opt['coverage_height'], self.opt['coverage_bgcolor'])
@@ -392,20 +392,20 @@ class BamSnapPlot():
 
             if plot1 == "read":
                 if self.opt['read_group'] == "":
-                    h_all = max_h if max_h > 0 else rset.get_estimated_height('all')
+                    h_all = rset.get_estimated_height('all')
                     ia_sub = rset.get_image(
                         image_w, h_all, 'all', self.opt['read_color'], self.opt['read_bgcolor'], self.opt['read_color_by'])
                     im = self.append_image(im, ia_sub)
 
                 elif self.opt['read_group'] == "strand":
                     # self.opt['read_bgcolor'] = "F0F000"
-                    h_pos = max_h if max_h > 0 else rset.get_estimated_height('pos_strand')
+                    h_pos = rset.get_estimated_height('pos_strand')
                     ia_sub = rset.get_image(image_w, h_pos, 'pos_strand',
                                             self.opt['read_pos_color'], self.opt['read_bgcolor'], self.opt['read_color_by'])
                     im = self.append_image(im, ia_sub)
 
                     # self.opt['read_bgcolor'] = "00F0F0"
-                    h_neg = max_h if max_h > 0 else rset.get_estimated_height('neg_strand')
+                    h_neg = rset.get_estimated_height('neg_strand')
                     ia_sub = rset.get_image(image_w, h_neg, 'neg_strand',
                                             self.opt['read_neg_color'], self.opt['read_bgcolor'], self.opt['read_color_by'])
                     im = self.append_image(im, ia_sub)
@@ -471,19 +471,28 @@ class BamSnapPlot():
     #     zo.close()
     #     self.opt['log'].info("(" + mp.current_process().name + ") Saved " + outzip)
 
-    def drawplot_bamlist(self, pos1, image_w, bamlist, xscale, refseq):
+    def drawplot_bamlist(self, pos1, image_w, bamlist, xscale, refseq, scale_y=True):
         ia = self.init_image(image_w, self.opt['bgcolor'])
         drawA = None
 
+        #self.opt['log'].info("in drawplot_bamlist")
+        
         for pidx, plot1 in enumerate(self.drawplot):
             if plot1 == "coordinates":
                 ia = self.append_coordinates_image(ia, pos1, image_w, xscale)
 
             if plot1 == "bamplot":
+                max_cov = 0
+                if scale_y:
+                    for bidx, bam in enumerate(bamlist):
+                        cur_max_cov = self.get_bamplot_max_cov(bam, pos1, image_w, xscale, refseq)
+                        max_cov = max(max_cov, cur_max_cov)
+                    self.opt['log'].info("max coverage of all bam files = %d" % max_cov)
+
                 for bidx, bam in enumerate(bamlist):
                     if (bidx + 1) % 10 == 0:
                         self.opt['log'].info("..processing " + bam.filename + " (" + str(bidx + 1) + ")")
-                    ia_sub = self.get_bamplot_image(bam, pos1, image_w, xscale, refseq)
+                    ia_sub = self.get_bamplot_image(bam, pos1, image_w, xscale, refseq, max_cov)
                     ia = self.append_image(ia, ia_sub)
 
                     if not self.opt['border'] and self.opt['separator_height'] > 0:

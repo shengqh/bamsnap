@@ -7,7 +7,8 @@ from .util import getrgb, get_scale, add_dict_value, init_dict
 
 
 class CoveragePlot():
-    def __init__(self, readset, xscale, coverage_vaf_threshold=0.2):
+    def __init__(self, opt, readset, xscale, coverage_vaf_threshold=0.2, max_cov=0):
+        self.opt = opt
         self.readset = readset
         self.font = None
         self.font_size = 12
@@ -16,6 +17,7 @@ class CoveragePlot():
         self.xscale = xscale
         self.coverage_color = "C8C8C8"
         self.axis_color = "000000"
+        self.max_cov = max_cov
 
     def get_image(self, w, h, bgcolor="FFFFFF"):
         if self.im is None:
@@ -41,6 +43,8 @@ class CoveragePlot():
             covmap = {}
             max_cov = 0
         # max_cov = max(max_cov, 5)
+        if self.max_cov > 0:
+            self.opt['log'].info("Scale read depth from %d to %s" % (max_cov, self.max_cov))
         
         g_spos = self.readset.g_spos
         g_epos = self.readset.g_epos
