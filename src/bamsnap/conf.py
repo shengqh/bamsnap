@@ -47,6 +47,6 @@ COLOR['GRID_COLOR'] = ImageColor.getrgb("#EEEEEE")
 
 IMAGE_MARGIN_BOTTOM = 20
 
-GENE_ANNOT_FILE  = "Homo_sapiens.#REFSEQVERSION#.bed.gz"
+GENE_ANNOT_FILE  = "#REFSEQVERSION#.bed.gz"
 
-REFER_SEQ_VERSION = {'GRCh37': 'GRCh37', 'hg19':'GRCh37', 'GRCh38':'GRCh38', 'hg38':'GRCh38'}
+REFER_SEQ_VERSION = {'GRCh37': 'Homo_sapiens.GRCh37', 'hg19':'Homo_sapiens.GRCh37', 'GRCh38':'Homo_sapiens.GRCh38', 'hg38':'Homo_sapiens.GRCh38', "mm10":"Mus_musculus.GRCm38"}
