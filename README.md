@@ -33,7 +33,7 @@ pip install bamsnap
 ### Install with github
 
 ```
-git clone https://github.com/parklab/bamsnap
+git clone https://github.com/shengqh/bamsnap
 cd bamsnap
 python setup.py install
 ```
@@ -47,7 +47,7 @@ $ bamsnap -bam test.bam -pos 1:7364529 -out test.png
 
 For more details, see BamSnap [**Documentation**](http://bamsnap.readthedocs.io/en/latest).
 
-### Usage with docker
+### Usage with docker (not supported by this repo yet)
 ```bash
 $ docker pull danielmsk/bamsnap
 $ docker run --rm -it -v /local_directory_path:/directory_path_in_image danielmsk/bamsnap bamsnap \
