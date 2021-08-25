@@ -14,6 +14,10 @@ For more details, see BamSnap [**Documentation**](http://bamsnap.readthedocs.io/
 [<img src="https://readthedocs.org/projects/bamsnap/badge/?version=latest">](https://bamsnap.readthedocs.io/)
 [<img src="https://img.shields.io/docker/pulls/danielmsk/bamsnap.svg">](https://hub.docker.com/r/danielmsk/bamsnap)
 
+## Modification
+
+I updated the code to compatible with CIGAR string with tag 3 (skipped region from the reference). I also upload corresponding docker image to dockerhub.
+
 ## Installation
 
 ### Prerequisites
@@ -22,13 +26,6 @@ For more details, see BamSnap [**Documentation**](http://bamsnap.readthedocs.io/
 * [pysam](https://pypi.org/project/pysam/)
 * [pyfaidx](https://pypi.org/project/pyfaidx/)
 * [pytabix](https://pypi.org/project/pytabix/)
-
-### Install with pip
-
-```bash
-pip install bamsnap
-```
-* [pypi site for bamsnap](https://pypi.org/project/bamsnap/)
 
 ### Install with github
 
@@ -47,10 +44,10 @@ $ bamsnap -bam test.bam -pos 1:7364529 -out test.png
 
 For more details, see BamSnap [**Documentation**](http://bamsnap.readthedocs.io/en/latest).
 
-### Usage with docker (not supported by this repo yet)
+### Usage with docker
 ```bash
-$ docker pull danielmsk/bamsnap
-$ docker run --rm -it -v /local_directory_path:/directory_path_in_image danielmsk/bamsnap bamsnap \
+$ docker pull shengqh/cqs_bamsnap
+$ docker run --rm -it -v /local_directory_path:/directory_path_in_image shengqh/cqs_bamsnap bamsnap \
     -bam /directory_path_in_image/test.bam \
     -pos 1:7364529 \
     -out /directory_path_in_image/test.png
