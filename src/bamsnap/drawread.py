@@ -101,6 +101,8 @@ class DrawRead():
                 self.has_ins = True
                 self.ins_list.append(gpos)
                 bidx += cg[1]
+            elif cg[0] == 3: #skipped region from the reference
+                ridx += cg[1]
             elif cg[0] == 4:  # soft clipped
                 self.has_softclipped = True
                 if cidx == 0:
@@ -120,6 +122,8 @@ class DrawRead():
                         bidx += 1
             elif cg[0] == 5:
                 gpos -= cg[1]
+            elif cg[0] == 6: #padding (silent deletion from padded reference)
+                raise Exception("Handling padding is not impelemented.")
             else:
                 for gp in range(prev_gpos, gpos):
                     base = self.readseq_with_softclipped[bidx]
