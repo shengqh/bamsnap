@@ -7,7 +7,7 @@ from .util import getrgb, get_scale, add_dict_value, init_dict
 
 
 class CoveragePlot():
-    def __init__(self, opt, readset, xscale, coverage_vaf_threshold=0.2, max_cov=0):
+    def __init__(self, opt, readset, xscale, coverage_vaf_threshold=0.2, scale_max_cov=0):
         self.opt = opt
         self.readset = readset
         self.font = None
@@ -17,7 +17,7 @@ class CoveragePlot():
         self.xscale = xscale
         self.coverage_color = "C8C8C8"
         self.axis_color = "000000"
-        self.max_cov = max_cov
+        self.scale_max_cov = scale_max_cov
 
     def get_image(self, w, h, bgcolor="FFFFFF"):
         if self.im is None:
@@ -45,9 +45,9 @@ class CoveragePlot():
 
         true_max_cov = max_cov
         # max_cov = max(max_cov, 5)
-        if self.max_cov > 0:
-            self.opt['log'].info("True coverage = %d, scale to %s" % (max_cov, self.max_cov))
-            max_cov = self.max_cov
+        if self.scale_max_cov > 0:
+            self.opt['log'].info("True coverage = %d, scale to %s" % (max_cov, self.scale_max_cov))
+            max_cov = self.scale_max_cov
         
         g_spos = self.readset.g_spos
         g_epos = self.readset.g_epos
@@ -63,7 +63,7 @@ class CoveragePlot():
             base_composition = covmap[posi][1]
             # x = int((posi - g_spos) * self.scale_x) + int(self.base_width/2)
             # x = int((posi - g_spos) * self.scale_x)
-            if max_cov > 0:
+            if true_max_cov > 0:
                 y1 = h
                 y2 = round(h - (cov / max_cov * h), 0)
                 x1 = self.xscale.xmap[posi]['spos']
