@@ -57,39 +57,40 @@ class CoveragePlot():
         fill_color = getrgb(self.coverage_color)
         outline_color = getrgb(self.coverage_color, 15)
 
-        alt_pos_list = []
-        for posi in sorted(covmap.keys()):
-            cov = covmap[posi][0]
-            base_composition = covmap[posi][1]
-            # x = int((posi - g_spos) * self.scale_x) + int(self.base_width/2)
-            # x = int((posi - g_spos) * self.scale_x)
-            if true_max_cov > 0:
-                y1 = h
-                y2 = round(h - (cov / max_cov * h), 0)
-                x1 = self.xscale.xmap[posi]['spos']
-                x2 = self.xscale.xmap[posi]['epos']
-                dr.rectangle([(x1, y1), (x2, y2)], fill=fill_color, outline=outline_color, width=1)
-                # print(posi, cov, base_composition, len(base_composition.keys()), max_cov, refseq[posi])
-                if len(base_composition.keys()) > 1:
-                    # print(posi, cov, base_composition, max_cov)
-                    # print(len(base_composition.keys()))
-                    # if is_OK(base_composition, refseq[posi]):
-                    alt_pos_list.append((cov, posi))
-        if self.coverage_vaf_threshold <= 1:
-            for (cov, posi) in alt_pos_list:
+        if max_cov > 0:
+            alt_pos_list = []
+            for posi in sorted(covmap.keys()):
                 cov = covmap[posi][0]
                 base_composition = covmap[posi][1]
-                x = self.xscale.xmap[posi]['cpos']
-                y1 = h
-                y2 = round(h - (cov / max_cov * h), 0)
-                y11 = y1
-                vaf = self.get_vaf(base_composition, cov, posi, refseq)
-                if vaf >= self.coverage_vaf_threshold:
-                    for base in base_composition.keys():
-                        h2 = base_composition[base] / max_cov * h
-                        y21 = y11-h2
-                        dr.line([(x, y11), (x, y21)], fill=COLOR[base], width=self.xscale.base_width)
-                        y11 = y21
+                # x = int((posi - g_spos) * self.scale_x) + int(self.base_width/2)
+                # x = int((posi - g_spos) * self.scale_x)
+                if true_max_cov > 0:
+                    y1 = h
+                    y2 = round(h - (cov / max_cov * h), 0)
+                    x1 = self.xscale.xmap[posi]['spos']
+                    x2 = self.xscale.xmap[posi]['epos']
+                    dr.rectangle([(x1, y1), (x2, y2)], fill=fill_color, outline=outline_color, width=1)
+                    # print(posi, cov, base_composition, len(base_composition.keys()), max_cov, refseq[posi])
+                    if len(base_composition.keys()) > 1:
+                        # print(posi, cov, base_composition, max_cov)
+                        # print(len(base_composition.keys()))
+                        # if is_OK(base_composition, refseq[posi]):
+                        alt_pos_list.append((cov, posi))
+            if self.coverage_vaf_threshold <= 1:
+                for (cov, posi) in alt_pos_list:
+                    cov = covmap[posi][0]
+                    base_composition = covmap[posi][1]
+                    x = self.xscale.xmap[posi]['cpos']
+                    y1 = h
+                    y2 = round(h - (cov / max_cov * h), 0)
+                    y11 = y1
+                    vaf = self.get_vaf(base_composition, cov, posi, refseq)
+                    if vaf >= self.coverage_vaf_threshold:
+                        for base in base_composition.keys():
+                            h2 = base_composition[base] / max_cov * h
+                            y21 = y11-h2
+                            dr.line([(x, y11), (x, y21)], fill=COLOR[base], width=self.xscale.base_width)
+                            y11 = y21
 
         x1 = 0
         # dr.line([(x1, 0), (x1+3, 0)], fill=getrgb(self.axis_color), width=1)
