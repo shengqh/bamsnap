@@ -20,7 +20,7 @@ extras_require = {
 }
 
 setup(name='bamsnap',
-      version='0.2.19.20220117',
+      version='0.2.19.20220121',
       url='https://github.com/shengqh/bamsnap/',
       license='MIT',
       author='Quanhu Sheng, Daniel Minseok Kwon',
