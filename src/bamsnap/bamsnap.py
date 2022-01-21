@@ -384,7 +384,7 @@ class BamSnapPlot():
                 im = self.append_image(im, ia_sub)
 
             if plot1 == "coverage":
-                covplot = CoveragePlot(self.opt, rset, xscale, self.opt['coverage_vaf'], max_cov=max_cov)
+                covplot = CoveragePlot(self.opt, rset, xscale, self.opt['coverage_vaf'], scale_max_cov=max_cov)
                 covplot.coverage_color = self.opt['coverage_color']
                 covplot.font = self.get_font(self.opt['coverage_fontsize'])
                 ia_sub = covplot.get_image(image_w, self.opt['coverage_height'], self.opt['coverage_bgcolor'])
