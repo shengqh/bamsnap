@@ -209,12 +209,16 @@ class DrawRead():
             self.flag_draw = True
 
     def draw_read_body(self, dr, y1, col1, readcolorby=""):
-        if self.opt['show_soft_clipped'] and self.has_softclipped:
-            x1 = self.xscale.xmap[self.g_spos_with_softclipped]['spos']
-            x2 = self.xscale.xmap[self.g_epos_with_softclipped]['epos']
-        else:
-            x1 = self.xscale.xmap[self.g_spos]['spos']
-            x2 = self.xscale.xmap[self.g_epos]['epos']
+        g_spos = self.g_spos_with_softclipped if self.opt['show_soft_clipped'] and self.has_softclipped else self.g_spos
+        if g_spos not in self.xscale.xmap:
+            return
+
+        g_epos = self.g_epos_with_softclipped if self.opt['show_soft_clipped'] and self.has_softclipped else self.g_epos
+        if g_epos not in self.xscale.xmap:
+            return
+
+        x1 = self.xscale.xmap[g_spos]['spos']
+        x2 = self.xscale.xmap[g_epos]['epos']
     
         xy = []
         if self.read_thickness > 1:
@@ -252,6 +256,9 @@ class DrawRead():
 
     def draw_mismatch(self, dr, y1):
         for gpos in self.mismatch_list:
+            if gpos not in self.xscale.xmap:
+                continue
+            
             base_qual = self.readseqinfo[gpos][3]
             color_tag = "w" if base_qual < 15 else ""
             alt = self.readseqinfo[gpos][0]

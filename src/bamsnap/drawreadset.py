@@ -60,6 +60,9 @@ class CoveragePlot():
         if max_cov > 0:
             alt_pos_list = []
             for posi in sorted(covmap.keys()):
+                if posi not in self.xscale.xmap:
+                    continue
+
                 cov = covmap[posi][0]
                 base_composition = covmap[posi][1]
                 # x = int((posi - g_spos) * self.scale_x) + int(self.base_width/2)
@@ -198,36 +201,38 @@ class DrawReadSet():
             self.readmap[gpos] = {}
 
     def get_yidx(self, r, group='all'):
-        try:
-            yidx = self.yidxmap[group][r.id]
-        except KeyError:
-            yidxmap = {}
-            (g_spos, g_epos) = r.get_genomic_spos_epos()
-            for gpos in range(g_spos-self.read_gap_w, g_epos+1+self.read_gap_w):
-                try:
-                    self.readmap[gpos][group]
-                except KeyError:
-                    self.readmap[gpos][group] = []
+        if group in self.yidxmap:
+            if r.id in self.yidxmap[group]:
+                return(self.yidxmap[group][r.id])
 
-                for y1 in self.readmap[gpos][group]:
-                    yidxmap[y1] = 1
-            # print(len(yidxmap.keys()))
-            ak = sorted(yidxmap.keys())
-            if len(ak) == 0:
-                yidx = 1
-            else:
-                for i in range(1, max(ak)+2):
-                    try:
-                        tmp = yidxmap[i]
-                    except KeyError:
-                        yidx = i
-                        break
-            for gpos in range(g_spos-self.read_gap_w, g_epos+1+self.read_gap_w):
-                self.readmap[gpos][group].append(yidx)
-            try:
-                self.yidxmap[group][r.id] = yidx
-            except KeyError:
-                self.yidxmap[group] = {r.id:yidx}
+        yidxmap = {}
+        (g_spos, g_epos) = r.get_genomic_spos_epos()
+        for gpos in range(g_spos-self.read_gap_w, g_epos+1+self.read_gap_w):
+            if gpos not in self.readmap:
+                self.readmap[gpos] = {}
+
+            if group not in self.readmap[gpos]:
+                self.readmap[gpos][group] = []
+
+            for y1 in self.readmap[gpos][group]:
+                yidxmap[y1] = 1
+        # print(len(yidxmap.keys()))
+        ak = sorted(yidxmap.keys())
+        if len(ak) == 0:
+            yidx = 1
+        else:
+            for i in range(1, max(ak)+2):
+                try:
+                    tmp = yidxmap[i]
+                except KeyError:
+                    yidx = i
+                    break
+        for gpos in range(g_spos-self.read_gap_w, g_epos+1+self.read_gap_w):
+            self.readmap[gpos][group].append(yidx)
+        try:
+            self.yidxmap[group][r.id] = yidx
+        except KeyError:
+            self.yidxmap[group] = {r.id:yidx}
         return yidx
 
     def is_exist_read(self, rid):
@@ -334,22 +339,19 @@ class DrawReadSet():
                         group = 'neg_strand'
                     else:
                         group = 'pos_strand'
-                    try:
-                        self.readlist[group]
-                    except KeyError:
+
+                    if group not in self.readlist:
                         self.readlist[group] = []
+
                     if rid not in self.readlist[group]:
                         self.readlist[group].append(rid)
                     self.add_covmap(group, r)
         
         for group in group_list:
-            try:
-                for rid in self.readlist[group]:
-                    yidx = self.get_yidx(self.readset[rid], group)
-                    if self.max_cov[group] < yidx:
-                        self.max_cov[group] = yidx
-            except KeyError:
-                self.max_cov[group] = 0
+            for rid in self.readlist[group]:
+                yidx = self.get_yidx(self.readset[rid], group)
+                if self.max_cov[group] < yidx:
+                    self.max_cov[group] = yidx
 
     def get_estimated_height(self, group='all'):
         h = self.max_cov[group] * (self.read_thickness + self.read_gap_h) + self.read_thickness
