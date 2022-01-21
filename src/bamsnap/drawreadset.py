@@ -348,6 +348,11 @@ class DrawReadSet():
                     self.add_covmap(group, r)
         
         for group in group_list:
+            if group not in self.readlist:
+                if group not in self.max_cov:
+                    self.max_cov[group] = 0
+                continue
+
             for rid in self.readlist[group]:
                 yidx = self.get_yidx(self.readset[rid], group)
                 if self.max_cov[group] < yidx:

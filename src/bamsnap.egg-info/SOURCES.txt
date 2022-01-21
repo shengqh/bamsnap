@@ -148,9 +148,11 @@ src/bamsnap/templates/sample_temp.html
 src/bamsnap/templates/template.html
 src/bamsnap/templates/variant_list.html
 src/bamsnap/templates/variant_temp.html
+tests/context.py
 tests/test_basetrack.py
 tests/test_run.py
 tests/test_scale.py
+tests/test_sqh.py
 tests/test_util.py
 tests/test_zip.py
 tests/data/NA12877.bam

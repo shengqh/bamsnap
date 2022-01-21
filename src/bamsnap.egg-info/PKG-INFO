@@ -1,12 +1,12 @@
 Metadata-Version: 2.1
 Name: bamsnap
-Version: 0.2.19.20220114
+Version: 0.2.19.20220121
 Summary: A converter from .bam to .png for specific genomic region.
-Home-page: https://github.com/danielmsk/bamsnap
-Author: Daniel Minseok Kwon
-Author-email: daniel.minseok.kwon@gmail.com
+Home-page: https://github.com/shengqh/bamsnap/
+Author: Quanhu Sheng, Daniel Minseok Kwon
+Author-email: shengqh@gmail.com, daniel.minseok.kwon@gmail.com
 License: MIT
-Download-URL: https://github.com/danielmsk/bamsnap/archive/0.1.tar.gz
+Download-URL: https://github.com/shengqh/bamsnap/
 Keywords: genomics,bioinformatics
 Platform: UNKNOWN
 Classifier: Operating System :: OS Independent
