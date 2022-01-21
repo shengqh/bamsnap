@@ -21,12 +21,12 @@ extras_require = {
 
 setup(name='bamsnap',
       version='0.2.19.20220117',
-      url='https://github.com/danielmsk/bamsnap',
+      url='https://github.com/shengqh/bamsnap/',
       license='MIT',
       author='Quanhu Sheng, Daniel Minseok Kwon',
       author_email='shengqh@gmail.com, daniel.minseok.kwon@gmail.com',
       description='A converter from .bam to .png for specific genomic region.',
-      download_url='https://github.com/danielmsk/bamsnap/archive/0.1.tar.gz',
+      download_url='https://github.com/shengqh/bamsnap/',
       keywords=['genomics', 'bioinformatics'],
       classifiers=[
           'Operating System :: OS Independent',
