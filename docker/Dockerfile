@@ -7,7 +7,7 @@ RUN pip install --no-cache pysam
 RUN pip install --no-cache Pillow
 RUN pip install --no-cache pytabix
 
-ENV BAMSNAP_VERSION=20210826
+ENV BAMSNAP_VERSION=20220117
 RUN python -m pip install git+https://github.com/shengqh/bamsnap.git
 
 # RUN mkdir -p /src
